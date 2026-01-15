@@ -69,7 +69,6 @@ namespace SkillEditor.Editor
             EditorGUILayout.PropertyField(serializedObject.FindProperty("skillName"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("description"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("icon"));
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("defaultValue"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("pipelineCount"));
             
             EditorGUILayout.Space();
