@@ -30,11 +30,11 @@ Assets/
 using SkillEditor.Core;
 using UnityEngine;
 
-[SkillBehaviour("화염구", "#FF5500", "대상에게 불 피해를 준다")]
+[SkillBehaviour("대미지", "#FF5500", "대상에게 피해를 준다")]
 public class FireballSkill : SkillBehaviourBase
 {
-    public override string Name => "화염구";
-    public override string Description => "대상에게 불 피해를 준다";
+    public override string Name => "대미지";
+    public override string Description => "대상에게 피해를 준다";
     public override Color NodeColor => new Color(1f, 0.33f, 0f);
     
     public override void Execute(ISkillContext context, int value)
