@@ -35,6 +35,7 @@ namespace SkillEditor.Editor
                 // 값
                 new SearchTreeGroupEntry(new GUIContent("값"), 1),
                 new SearchTreeEntry(new GUIContent("Number")) { level = 2, userData = "Number" },
+                new SearchTreeEntry(new GUIContent("Variable")) { level = 2, userData = "Variable" },
                 new SearchTreeEntry(new GUIContent("Get Property")) { level = 2, userData = "GetProperty" },
                 new SearchTreeEntry(new GUIContent("Math (+−×÷)")) { level = 2, userData = "Math" },
                 new SearchTreeEntry(new GUIContent("Processor")) { level = 2, userData = "Processor" },
@@ -94,6 +95,7 @@ namespace SkillEditor.Editor
                     "NOT" => new NotNode(_graphView),
                     "Compare" => new ComparisonNode(_graphView),
                     "Number" => new ConstantNode(_graphView),
+                    "Variable" => new VariableNode(_graphView),
                     "GetProperty" => new GetPropertyNode(_graphView),
                     "Math" => new MathNode(_graphView),
                     "Processor" => new ValueProcessorNode(_graphView),

@@ -64,6 +64,9 @@ namespace SkillEditor.Core
         // ValueProcessor용
         public string processorName;
         
+        // Variable용
+        public string variableName;
+        
         // 입력값들 (Math, Processor 공용)
         [SerializeReference] public CompiledValue[] inputs;
     }
@@ -72,5 +75,5 @@ namespace SkillEditor.Core
     public enum EntitySource { Self, Target }
     public enum ConditionType { AlwaysTrue, AlwaysFalse, And, Or, Not, Compare }
     public enum CompareType { Equal, Greater, Less, GreaterOrEqual, LessOrEqual }
-    public enum ValueType { Constant, EntityProperty, Math, Processor }
+    public enum ValueType { Constant, EntityProperty, Math, Processor, Variable }
 }

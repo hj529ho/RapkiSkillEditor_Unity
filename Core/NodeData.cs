@@ -46,6 +46,17 @@ namespace SkillEditor.Core
         public float value;
     }
     
+    [System.Serializable]
+    public class VariableNodeData : BaseNodeData
+    {
+        public string variableName;
+        public VariableType variableType;
+        public int defaultIntValue;
+        public float defaultFloatValue;
+        public int intValue;
+        public float floatValue;
+    }
+    
     /// <summary>
     /// 엣지 데이터
     /// </summary>

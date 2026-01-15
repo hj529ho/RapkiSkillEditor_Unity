@@ -34,6 +34,17 @@ namespace SkillEditor.Editor
                     NotNode not => new LogicalNodeData { guid = not.Guid, position = not.GetPosition().position, conditionType = ConditionType.Not },
                     ComparisonNode comp => new ComparisonNodeData { guid = comp.Guid, position = comp.GetPosition().position, compareType = comp.CompareType },
                     ConstantNode constant => new ConstantNodeData { guid = constant.Guid, position = constant.GetPosition().position, value = constant.Value },
+                    VariableNode variable => new VariableNodeData 
+                    { 
+                        guid = variable.Guid, 
+                        position = variable.GetPosition().position, 
+                        variableName = variable.VariableName,
+                        variableType = variable.VariableType,
+                        defaultIntValue = variable.DefaultIntValue,
+                        defaultFloatValue = variable.DefaultFloatValue,
+                        intValue = variable.IntValue,
+                        floatValue = variable.FloatValue
+                    },
                     GetPropertyNode prop => new GetPropertyNodeData { guid = prop.Guid, position = prop.GetPosition().position, propertyName = prop.PropertyName },
                     MathNode math => new MathNodeData { guid = math.Guid, position = math.GetPosition().position, mathType = math.MathType },
                     ValueProcessorNode proc => new ValueProcessorNodeData { guid = proc.Guid, position = proc.GetPosition().position, processorName = proc.ProcessorName },
@@ -70,6 +81,19 @@ namespace SkillEditor.Editor
             data.icon = infoNode.Icon;
             // data.defaultValue = infoNode.DefaultValue;
             data.pipelineCount = infoNode.PipelineCount;
+            
+            // Variables 동기화
+            data.variables.Clear();
+            foreach (var node in graphView.nodes.OfType<VariableNode>())
+            {
+                data.variables.Add(new SkillVariable(node.VariableName, node.VariableType)
+                {
+                    defaultIntValue = node.DefaultIntValue,
+                    defaultFloatValue = node.DefaultFloatValue,
+                    intValue = node.IntValue,
+                    floatValue = node.FloatValue
+                });
+            }
 
             // 컴파일
             SkillGraphCompiler.Compile(data);
@@ -93,6 +117,15 @@ namespace SkillEditor.Editor
                 graphView.InfoNode.Guid = infoData.guid;
                 graphView.InfoNode.LoadData(data);
                 nodeMap[infoData.guid] = graphView.InfoNode;
+                graphView.InfoNode.SkillName = data.skillName;
+                graphView.InfoNode.NameField.value = data.skillName;
+                graphView.InfoNode.Description = data.description;
+                graphView.InfoNode.DescriptionField.value = data.description;
+                graphView.InfoNode.Icon = data.icon;
+                graphView.InfoNode.IconField.value = data.icon;
+                // graphView.InfoNode.DefaultValue = data.defaultValue;
+                graphView.InfoNode.PipelineCount = data.pipelineCount;
+                graphView.InfoNode.PipelineCountSlider.value = data.pipelineCount;
             }
 
             // 노드 생성
@@ -111,6 +144,7 @@ namespace SkillEditor.Editor
                     LogicalNodeData logical => CreateLogicalNode(graphView, logical),
                     ComparisonNodeData comp => new ComparisonNode(graphView) { Guid = comp.guid, CompareType = comp.compareType },
                     ConstantNodeData constant => new ConstantNode(graphView) { Guid = constant.guid, Value = constant.value },
+                    VariableNodeData variable => CreateVariableNode(graphView, variable),
                     GetPropertyNodeData prop => CreateGetPropertyNode(graphView, prop),
                     MathNodeData math => CreateMathNode(graphView, math),
                     ValueProcessorNodeData proc => CreateValueProcessorNode(graphView, proc),
@@ -185,6 +219,15 @@ namespace SkillEditor.Editor
         {
             var node = new ValueProcessorNode(graphView) { Guid = data.guid };
             node.SetProcessor(data.processorName);
+            return node;
+        }
+        
+        private static BaseNode CreateVariableNode(SkillGraphView graphView, VariableNodeData data)
+        {
+            var node = new VariableNode(graphView) { Guid = data.guid };
+            node.SetVariable(data.variableName, data.variableType, 
+                data.defaultIntValue, data.defaultFloatValue,
+                data.intValue, data.floatValue);
             return node;
         }
 

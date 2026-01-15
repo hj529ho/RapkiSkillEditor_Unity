@@ -146,6 +146,15 @@ namespace SkillEditor.Core
                 return CompileProcessorValue(data, proc);
             }
             
+            if (sourceNode is VariableNodeData variable)
+            {
+                return new CompiledValue
+                {
+                    type = ValueType.Variable,
+                    variableName = variable.variableName
+                };
+            }
+            
             return new CompiledValue { type = ValueType.Constant, constantValue = skill.value };
         }
 
@@ -281,6 +290,15 @@ namespace SkillEditor.Core
             if (sourceNode is ValueProcessorNodeData proc)
             {
                 return CompileProcessorValue(data, proc);
+            }
+            
+            if (sourceNode is VariableNodeData variable)
+            {
+                return new CompiledValue
+                {
+                    type = ValueType.Variable,
+                    variableName = variable.variableName
+                };
             }
             
             return new CompiledValue { type = ValueType.Constant, constantValue = 0 };

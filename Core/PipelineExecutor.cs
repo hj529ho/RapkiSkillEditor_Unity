@@ -7,7 +7,8 @@ namespace SkillEditor.Core
     /// </summary>
     public static class PipelineExecutor
     {
-        public static void Execute(CompiledPipeline pipeline, ISkillContext context, ISkillBehaviourRegistry registry)
+        public static void Execute(CompiledPipeline pipeline, ISkillContext context, 
+            ISkillBehaviourRegistry registry, SkillGraphData graphData = null)
         {
             if (pipeline?.actions == null || pipeline.actions.Count == 0)
             {
@@ -21,17 +22,18 @@ namespace SkillEditor.Core
                 switch (action.actionType)
                 {
                     case ActionType.SkillBehaviour:
-                        ExecuteSkillBehaviour(action, context, registry);
+                        ExecuteSkillBehaviour(action, context, registry, graphData);
                         break;
                     case ActionType.Branch:
-                        if (!EvaluateCondition(action.condition, context))
+                        if (!EvaluateCondition(action.condition, context, graphData))
                             i = action.jumpIfFalse - 1;
                         break;
                 }
             }
         }
         
-        private static void ExecuteSkillBehaviour(CompiledAction action, ISkillContext context, ISkillBehaviourRegistry registry)
+        private static void ExecuteSkillBehaviour(CompiledAction action, ISkillContext context, 
+            ISkillBehaviourRegistry registry, SkillGraphData graphData)
         {
             var execContext = new SkillContext
             {
@@ -42,14 +44,14 @@ namespace SkillEditor.Core
             var behaviour = registry.Get(action.behaviourName);
             if (behaviour != null)
             {
-                var value = (int)GetValue(action.value, context);
+                var value = (int)GetValue(action.value, context, graphData);
                 behaviour.Execute(execContext, value);
             }
             else
                 Debug.LogWarning($"SkillBehaviour '{action.behaviourName}' not found");
         }
         
-        private static bool EvaluateCondition(CompiledCondition cond, ISkillContext context)
+        private static bool EvaluateCondition(CompiledCondition cond, ISkillContext context, SkillGraphData graphData)
         {
             if (cond == null) return true;
             
@@ -57,18 +59,18 @@ namespace SkillEditor.Core
             {
                 ConditionType.AlwaysTrue => true,
                 ConditionType.AlwaysFalse => false,
-                ConditionType.And => EvaluateCondition(cond.left, context) && EvaluateCondition(cond.right, context),
-                ConditionType.Or => EvaluateCondition(cond.left, context) || EvaluateCondition(cond.right, context),
-                ConditionType.Not => !EvaluateCondition(cond.left, context),
-                ConditionType.Compare => EvaluateCompare(cond, context),
+                ConditionType.And => EvaluateCondition(cond.left, context, graphData) && EvaluateCondition(cond.right, context, graphData),
+                ConditionType.Or => EvaluateCondition(cond.left, context, graphData) || EvaluateCondition(cond.right, context, graphData),
+                ConditionType.Not => !EvaluateCondition(cond.left, context, graphData),
+                ConditionType.Compare => EvaluateCompare(cond, context, graphData),
                 _ => true
             };
         }
         
-        private static bool EvaluateCompare(CompiledCondition cond, ISkillContext context)
+        private static bool EvaluateCompare(CompiledCondition cond, ISkillContext context, SkillGraphData graphData)
         {
-            var a = GetValue(cond.valueA, context);
-            var b = GetValue(cond.valueB, context);
+            var a = GetValue(cond.valueA, context, graphData);
+            var b = GetValue(cond.valueB, context, graphData);
             
             return cond.compareType switch
             {
@@ -81,7 +83,7 @@ namespace SkillEditor.Core
             };
         }
         
-        private static float GetValue(CompiledValue val, ISkillContext context)
+        private static float GetValue(CompiledValue val, ISkillContext context, SkillGraphData graphData)
         {
             if (val == null) return 0f;
             
@@ -89,8 +91,9 @@ namespace SkillEditor.Core
             {
                 ValueType.Constant => val.constantValue,
                 ValueType.EntityProperty => GetEntityProperty(val, context),
-                ValueType.Math => EvaluateMath(val, context),
-                ValueType.Processor => EvaluateProcessor(val, context),
+                ValueType.Math => EvaluateMath(val, context, graphData),
+                ValueType.Processor => EvaluateProcessor(val, context, graphData),
+                ValueType.Variable => graphData?.GetVariable(val.variableName) ?? 0f,
                 _ => 0f
             };
         }
@@ -101,12 +104,12 @@ namespace SkillEditor.Core
             return PropertyAccessorRegistry.Instance.GetValue(val.propertyName, entity);
         }
         
-        private static float EvaluateMath(CompiledValue val, ISkillContext context)
+        private static float EvaluateMath(CompiledValue val, ISkillContext context, SkillGraphData graphData)
         {
             if (val.inputs == null || val.inputs.Length < 2) return 0f;
             
-            var a = GetValue(val.inputs[0], context);
-            var b = GetValue(val.inputs[1], context);
+            var a = GetValue(val.inputs[0], context, graphData);
+            var b = GetValue(val.inputs[1], context, graphData);
             
             return val.mathType switch
             {
@@ -118,7 +121,7 @@ namespace SkillEditor.Core
             };
         }
         
-        private static float EvaluateProcessor(CompiledValue val, ISkillContext context)
+        private static float EvaluateProcessor(CompiledValue val, ISkillContext context, SkillGraphData graphData)
         {
             var processor = ValueProcessorRegistry.Instance.Get(val.processorName);
             if (processor == null) return 0f;
@@ -126,7 +129,7 @@ namespace SkillEditor.Core
             var inputs = new float[val.inputs?.Length ?? 0];
             for (int i = 0; i < inputs.Length; i++)
             {
-                inputs[i] = GetValue(val.inputs[i], context);
+                inputs[i] = GetValue(val.inputs[i], context, graphData);
             }
             
             return processor.Process(inputs);

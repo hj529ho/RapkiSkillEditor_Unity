@@ -17,6 +17,10 @@ namespace SkillEditor.Core
         // public int defaultValue;
         [Range(1, 3)] public int pipelineCount = 1;
         
+        [Header("Variables")]
+        [HideInInspector]
+        public List<SkillVariable> variables = new List<SkillVariable>();
+        
         [Header("Editor Data")]
         [SerializeReference]
         public List<BaseNodeData> nodes = new List<BaseNodeData>();
@@ -38,13 +42,25 @@ namespace SkillEditor.Core
             };
         }
         
+        public float GetVariable(string name)
+        {
+            var v = variables.Find(x => x.name == name);
+            return v?.GetValueAsFloat() ?? 0;
+        }
+        
+        public void SetVariable(string name, float value)
+        {
+            var v = variables.Find(x => x.name == name);
+            v?.SetValue(value);
+        }
+        
         /// <summary>
         /// 파이프라인 실행
         /// </summary>
         public void Execute(int pipelineIndex, ISkillContext context, ISkillBehaviourRegistry registry = null)
         {
             var pipeline = GetPipeline(pipelineIndex);
-            PipelineExecutor.Execute(pipeline, context, registry ?? SkillBehaviourRegistry.Instance);
+            PipelineExecutor.Execute(pipeline, context, registry ?? SkillBehaviourRegistry.Instance, this);
         }
     }
 }

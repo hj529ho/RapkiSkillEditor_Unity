@@ -12,9 +12,15 @@ namespace SkillEditor.Editor
         public string SkillName;
         public string Description;
         public Sprite Icon;
-        // public int DefaultValue;
+        public int DefaultValue;
         public int PipelineCount = 1;
 
+        //필드
+        public ObjectField IconField;
+        public TextField NameField;
+        public TextField DescriptionField;
+        public SliderInt PipelineCountSlider;
+        
         // 파이프라인 포트
         public Port Pipeline1Port;
         public Port Pipeline2Port;
@@ -37,9 +43,9 @@ namespace SkillEditor.Editor
             {
                 style =
                 {
-                    width = 200,
+                    width = 297.931f,
                     height = 200,
-                    marginBottom = 10,
+                    // marginBottom = 10,
                     alignSelf = Align.Center
                 },
                 scaleMode = ScaleMode.ScaleToFit
@@ -47,38 +53,38 @@ namespace SkillEditor.Editor
             mainContainer.Add(preview);
 
             // 아이콘 필드
-            var iconField = new ObjectField("Icon") { objectType = typeof(Sprite) };
-            iconField.RegisterValueChangedCallback(evt =>
+            IconField = new ObjectField("Icon") { objectType = typeof(Sprite) };
+            IconField.RegisterValueChangedCallback(evt =>
             {
                 Icon = evt.newValue as Sprite;
                 preview.image = Icon?.texture;
             });
-            mainContainer.Add(iconField);
+            mainContainer.Add(IconField);
 
             // 이름
-            var nameField = new TextField("Name") { value = "" };
-            nameField.RegisterValueChangedCallback(evt => SkillName = evt.newValue);
-            mainContainer.Add(nameField);
+            NameField = new TextField("Name") { value = "" };
+            NameField.RegisterValueChangedCallback(evt => SkillName = evt.newValue);
+            mainContainer.Add(NameField);
 
             // 설명
-            var descField = new TextField("Description") { value = "", multiline = true };
-            descField.style.minHeight = 40;
-            descField.RegisterValueChangedCallback(evt => Description = evt.newValue);
-            mainContainer.Add(descField);
+            DescriptionField = new TextField("Description") { value = "", multiline = true };
+            DescriptionField.style.minHeight = 40;
+            DescriptionField.RegisterValueChangedCallback(evt => Description = evt.newValue);
+            mainContainer.Add(DescriptionField);
 
-            // 기본값
+            // // 기본값
             // var valueField = new IntegerField("Default Value") { value = 0 };
             // valueField.RegisterValueChangedCallback(evt => DefaultValue = evt.newValue);
             // mainContainer.Add(valueField);
 
             // 파이프라인 개수
-            var rangeSlider = new SliderInt("Pipelines", 1, _config.MaxPipelines) { value = 1 };
-            rangeSlider.RegisterValueChangedCallback(evt =>
+            PipelineCountSlider = new SliderInt("Pipelines", 1, _config.MaxPipelines) { value = 1 };
+            PipelineCountSlider.RegisterValueChangedCallback(evt =>
             {
                 PipelineCount = evt.newValue;
                 UpdatePipelineVisibility();
             });
-            mainContainer.Add(rangeSlider);
+            mainContainer.Add(PipelineCountSlider);
 
             // 구분선
             mainContainer.Add(new VisualElement
