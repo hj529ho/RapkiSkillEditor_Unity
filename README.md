@@ -359,7 +359,7 @@ public interface IValueProcessor
 ### SkillBehaviourRegistry
 ```csharp
 // 자동 등록된 스킬 가져오기
-var skill = SkillBehaviourRegistry.Instance.Get("화염구");
+var skill = SkillBehaviourRegistry.Instance.Get("대미지");
 
 // 모든 스킬 정보
 foreach (var info in SkillBehaviourRegistry.Instance.Infos)
