@@ -12,6 +12,7 @@ namespace SkillEditor.Core
     {
         [Header("Skill Info")]
         public string skillName;
+        [TextArea(5, 10)] 
         public string description;
         public Sprite icon;
         // public int defaultValue;

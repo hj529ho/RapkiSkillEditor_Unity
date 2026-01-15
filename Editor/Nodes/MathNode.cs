@@ -11,7 +11,7 @@ namespace SkillEditor.Editor
         public Port InputA;
         public Port InputB;
         public Port Output;
-        
+        public EnumField EnumField;
         public MathType MathType = MathType.Add;
         
         public MathNode(SkillGraphView graphView) 
@@ -21,13 +21,13 @@ namespace SkillEditor.Editor
             InputB = CreateInputPort("B", typeof(float), Port.Capacity.Single, Color.gray);
             Output = CreateOutputPort("Result", typeof(float), Port.Capacity.Multi, Color.gray);
             
-            var dropdown = new EnumField("Type", MathType.Add);
-            dropdown.RegisterValueChangedCallback(evt =>
+            EnumField= new EnumField("Type", MathType.Add);
+            EnumField.RegisterValueChangedCallback(evt =>
             {
                 MathType = (MathType)evt.newValue;
                 UpdateTitle();
             });
-            mainContainer.Add(dropdown);
+            mainContainer.Add(EnumField);
             
             UpdateTitle();
             RefreshExpandedState();
@@ -38,6 +38,7 @@ namespace SkillEditor.Editor
         {
             MathType = type;
             UpdateTitle();
+            EnumField.value = type;
         }
         
         private void UpdateTitle()

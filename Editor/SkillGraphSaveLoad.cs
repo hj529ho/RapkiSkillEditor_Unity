@@ -33,7 +33,12 @@ namespace SkillEditor.Editor
                     OrNode or => new LogicalNodeData { guid = or.Guid, position = or.GetPosition().position, conditionType = ConditionType.Or },
                     NotNode not => new LogicalNodeData { guid = not.Guid, position = not.GetPosition().position, conditionType = ConditionType.Not },
                     ComparisonNode comp => new ComparisonNodeData { guid = comp.Guid, position = comp.GetPosition().position, compareType = comp.CompareType },
-                    ConstantNode constant => new ConstantNodeData { guid = constant.Guid, position = constant.GetPosition().position, value = constant.Value },
+                    ConstantNode constant => new ConstantNodeData
+                    {
+                        guid = constant.Guid, 
+                        position = constant.GetPosition().position, 
+                        value = constant.Value,
+                    },
                     VariableNode variable => new VariableNodeData 
                     { 
                         guid = variable.Guid, 
@@ -138,12 +143,32 @@ namespace SkillEditor.Editor
                     SkillBehaviourNodeData skill => new SkillBehaviourNode(graphView, skill.behaviourName)
                     {
                         Guid = skill.guid,
-                        Value = skill.value
+                        Value = skill.value,
+                        ValueField =
+                        {
+                            value = skill.value
+                        }
                     },
                     BranchNodeData branch => new BranchNode(graphView) { Guid = branch.guid },
                     LogicalNodeData logical => CreateLogicalNode(graphView, logical),
-                    ComparisonNodeData comp => new ComparisonNode(graphView) { Guid = comp.guid, CompareType = comp.compareType },
-                    ConstantNodeData constant => new ConstantNode(graphView) { Guid = constant.guid, Value = constant.value },
+                    ComparisonNodeData comp => new ComparisonNode(graphView)
+                    {
+                        Guid = comp.guid, 
+                        CompareType = comp.compareType,
+                        CompareTypeField =
+                        {
+                            value = comp.compareType
+                        }
+                    },
+                    ConstantNodeData constant => new ConstantNode(graphView)
+                    {
+                        Guid = constant.guid, 
+                        Value = constant.value,
+                        ValueField =
+                        {
+                            value = constant.value
+                        }
+                    },
                     VariableNodeData variable => CreateVariableNode(graphView, variable),
                     GetPropertyNodeData prop => CreateGetPropertyNode(graphView, prop),
                     MathNodeData math => CreateMathNode(graphView, math),

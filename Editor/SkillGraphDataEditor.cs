@@ -17,7 +17,7 @@ namespace SkillEditor.Editor
 
             var sprite = data.icon;
        
-
+            GUILayout.Space(10);
             if (sprite != null)
             {
                 float maxWidth = 200f;
@@ -67,7 +67,7 @@ namespace SkillEditor.Editor
             
             
             EditorGUILayout.PropertyField(serializedObject.FindProperty("skillName"));
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("description"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("description"), GUILayout.Height(150));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("icon"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("pipelineCount"));
             
@@ -85,21 +85,33 @@ namespace SkillEditor.Editor
                     
                     if (variable.type == VariableType.Int)
                     {
-                        int newVal = EditorGUILayout.IntField(variable.name, variable.intValue);
+                        variable.intValue = EditorGUILayout.IntField(variable.name, variable.intValue);
                         if (EditorGUI.EndChangeCheck())
                         {
+                            var variableData = data.nodes.Find(
+                                x => 
+                                    x.GetType() == typeof(VariableNodeData) &&
+                                    ((VariableNodeData)x).variableName == variable.name
+                                    );
+                            var nodeData = ((VariableNodeData)variableData);
+                            if (nodeData != null) nodeData.intValue = variable.intValue;
                             Undo.RecordObject(data, "Change Variable");
-                            variable.intValue = newVal;
                             EditorUtility.SetDirty(data);
                         }
                     }
                     else
                     {
-                        float newVal = EditorGUILayout.FloatField(variable.name, variable.floatValue);
+                        variable.floatValue  = EditorGUILayout.FloatField(variable.name, variable.floatValue);
                         if (EditorGUI.EndChangeCheck())
                         {
                             Undo.RecordObject(data, "Change Variable");
-                            variable.floatValue = newVal;
+                            var variableData = data.nodes.Find(
+                                x => 
+                                    x.GetType() == typeof(VariableNodeData) &&
+                                    ((VariableNodeData)x).variableName == variable.name
+                            );
+                            var nodeData = ((VariableNodeData)variableData);
+                            if (nodeData != null) nodeData.floatValue = variable.floatValue;
                             EditorUtility.SetDirty(data);
                         }
                     }
