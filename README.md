@@ -14,7 +14,7 @@
 
 ## 설치
 
-Core 폴더를 프로젝트에 복사
+SkillEditor 폴더를 프로젝트에 복사
 ```
 Assets/
 └── SkillEditor/
